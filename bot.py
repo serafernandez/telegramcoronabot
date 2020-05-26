@@ -29,7 +29,7 @@ def CoronavirusEnArgentina(mensaje, context):
         actual["Date"].split("T")[0]).strftime("%A, %d de %B del %Y")
     respuesta = "Fecha: {} \n\
         😷Casos: {} \n\
-        🚑Recuperados: {} \n\
+        😃Recuperados: {} \n\
         💀Muertes: {} \n\
         ".format(fecha_ultima_actualizacion, actual["Confirmed"], actual["Recovered"], actual["Deaths"])
 
