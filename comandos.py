@@ -155,7 +155,7 @@ class FuncionesCoronaBot:
             - Dificultades para hablar o moverse. \n\
             \n\
             \n\
-            Fuente: https://www.who.int/es/emergencies/diseases/novel-coronavirus-2019/advice-for-public/q-a-coronaviruses#:~:text=sintomas"
+            *Fuente*: https://www.who.int/es/emergencies/diseases/novel-coronavirus-2019/advice-for-public/q-a-coronaviruses#:~:text=sintomas"
         mensaje.message.reply_text(responder, parse_mode="markdown")
 
 
