@@ -1,10 +1,11 @@
 import locale
 from telegram.ext import Updater, CommandHandler
 from comandos import FuncionesCoronaBot
+import os
 
 locale.setlocale(locale.LC_TIME, "C.UTF-8")
 
-bot = Updater("729687786:AAGblY3R2fwxaQ_0ClfPwZ70ghH1BO0dJlU",
+bot = Updater(os.getenv("TOKEN_TG"),
               use_context=True)
 
 funciones_bot = FuncionesCoronaBot(bot)
