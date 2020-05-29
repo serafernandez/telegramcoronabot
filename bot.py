@@ -2,7 +2,7 @@ import locale
 from telegram.ext import Updater, CommandHandler
 from comandos import FuncionesCoronaBot
 
-locale.setlocale(locale.LC_TIME, "es_ES")
+locale.setlocale(locale.LC_TIME, "C.UTF-8")
 
 bot = Updater("729687786:AAGblY3R2fwxaQ_0ClfPwZ70ghH1BO0dJlU",
               use_context=True)
