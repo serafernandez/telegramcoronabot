@@ -4,37 +4,33 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from configs import LISTADO_DE_PAISES
 
 class FuncionesCoronaBot:
 
     def __init__(self, bot):
         self.bot = bot
 
-    def CoronavirusEnArgentina(self, mensaje, context):
-        pais = "argentina"
+    def enviar_datos_de_pais(self, country_full_name, country, chat_id):
+
+
         response = requests.get(
-            "https://api.covid19api.com/country/{}".format(pais))
-        if response.status_code == 200:
-            covid = response.json()
-        else:
-            pais = "argentina"
-            covid = requests.get(
-                "https://api.covid19api.com/country/{}".format(pais)).json()
+            "https://api.covid19api.com/country/{}".format(country))
+        covid = response.json()
 
         actual = covid[-1]
         fecha_ultima_actualizacion = datetime.fromisoformat(
-            actual["Date"].split("T")[0]).strftime("%A, %d de %B del %Y")
+          actual["Date"].split("T")[0]).strftime("%A, %d de %B del %Y")
         respuesta = "Fecha: {} \n\
             😷Casos: {} \n\
             😁Recuperados: {} \n\
             💀Muertes: {} \n\
             ".format(fecha_ultima_actualizacion, actual["Confirmed"], actual["Recovered"], actual["Deaths"])
 
-        #mensaje.message.reply_text(respuesta)
-
         try:
+            self.bot.bot.send_message(chat_id, country_full_name)
 
-            self.bot.bot.send_message(mensaje.message.chat_id, respuesta)
+            self.bot.bot.send_message(chat_id, respuesta)
 
             covid = pd.DataFrame(covid)
 
@@ -56,7 +52,8 @@ class FuncionesCoronaBot:
 
             plt.plot(covid.index.values, covid["Confirmed"].values)
 
-            plt.plot(covid.index.values, covid["Recovered"].values, color="green")
+            plt.plot(covid.index.values,
+                     covid["Recovered"].values, color="green")
 
             plt.plot(covid.index.values, covid["Deaths"].values, color="red")
 
@@ -86,17 +83,19 @@ class FuncionesCoronaBot:
 
             file = open("grafica.png", 'rb')
 
-            self.bot.bot.send_photo(mensaje.message.chat_id, file)
+            self.bot.bot.send_photo(chat_id, file)
 
         except Exception as e:
 
             print("Se rompio por {}".format(e))
 
             self.bot.bot.send_message(
-                mensaje.message.chat_id, "Bot fuera de funcionamiento, intente de nuevo mas tarde.")
+                chat_id, "Bot fuera de funcionamiento, intente de nuevo mas tarde.")
 
         print("se deberia haber mandado el mensaje")
 
+    def CoronavirusEnArgentina(self, mensaje, context):
+        self.enviar_datos_de_pais("Argentina", "argentina", mensaje.message.chat_id)
 
     def _build_menu(self, buttons, n_cols, header_buttons=None, footer_buttons=None):
         menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
@@ -112,17 +111,16 @@ class FuncionesCoronaBot:
     def listado_de_paises(self, mensaje, context):
 
         try:
-
-            df = pd.DataFrame(requests.get(
-                "https://api.covid19api.com/countries").json())
+            self.bot.bot.send_message(mensaje.message.chat_id, "La cantidad de paises es {}".format(len(LISTADO_DE_PAISES)))
+            df = pd.DataFrame(LISTADO_DE_PAISES)
 
             df = df.sort_values(by="Country")
 
             botones = []
 
-            for i in df["Country"].values:
+            for i in df.values:
 
-                botones.append(InlineKeyboardButton(i, callback_data="prueba"))
+                botones.append(InlineKeyboardButton(i[0], callback_data=f"getInfoCountry_{i[1]}_{i[0]}".format()))
 
             reply_markup = InlineKeyboardMarkup(self._build_menu(botones, n_cols=4))
 
